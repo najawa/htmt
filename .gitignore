@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+.thumbnail
+
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+.env
+.env.local
+
+# Discovery scratch — branded design-canvas material, kept local
+discovery/*.dc.html
+discovery/support.js
+discovery/assets/
+discovery/_ds/
+
+# Pipeline working files
+frames/
+clips/
+*.htmt.log

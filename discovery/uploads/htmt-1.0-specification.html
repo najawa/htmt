@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="HTMT 1.0 — HyperText Markup Transcript technical specification." />
+  <title>HTMT 1.0 — HyperText Markup Transcript Specification</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --surface:#ffffff;
+      --surface-2:#eef3f8;
+      --text:#172033;
+      --muted:#5f6b7a;
+      --line:#dbe3ec;
+      --accent:#2457ff;
+      --accent-2:#1638a8;
+      --code:#0f172a;
+      --code-text:#e5edf7;
+      --good:#177245;
+      --warn:#9a5a00;
+      --radius:14px;
+      --shadow:0 12px 34px rgba(20,34,66,.08);
+      --max:1180px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(36,87,255,.08), transparent 26rem),
+        var(--bg);
+      line-height:1.65;
+    }
+
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    code,kbd,pre{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}
+
+    .hero{
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg,#fff 0%,#f8faff 100%);
+    }
+
+    .hero-inner{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:56px 24px 44px;
+      display:grid;
+      grid-template-columns:1.5fr .8fr;
+      gap:42px;
+      align-items:end;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:6px 10px;
+      border:1px solid #cfd9ff;
+      border-radius:999px;
+      color:var(--accent-2);
+      background:#f5f7ff;
+      font-weight:700;
+      font-size:.78rem;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+
+    h1{
+      font-size:clamp(2.6rem,6vw,5.4rem);
+      line-height:.95;
+      letter-spacing:-.055em;
+      margin:.3em 0 .22em;
+    }
+
+    .subtitle{
+      font-size:1.18rem;
+      color:var(--muted);
+      max-width:760px;
+    }
+
+    .definition{
+      font-size:1.05rem;
+      margin-top:22px;
+      padding:18px 20px;
+      border-left:4px solid var(--accent);
+      background:#f4f7ff;
+      border-radius:0 10px 10px 0;
+    }
+
+    .meta-card{
+      background:var(--surface);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:22px;
+    }
+
+    .meta-row{
+      display:grid;
+      grid-template-columns:110px 1fr;
+      gap:14px;
+      padding:9px 0;
+      border-bottom:1px solid var(--line);
+      font-size:.93rem;
+    }
+
+    .meta-row:last-child{border-bottom:0}
+    .meta-key{color:var(--muted);font-weight:600}
+
+    .layout{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:28px 24px 72px;
+      display:grid;
+      grid-template-columns:260px minmax(0,1fr);
+      gap:36px;
+    }
+
+    nav{
+      position:sticky;
+      top:18px;
+      align-self:start;
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(12px);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+    }
+
+    nav strong{
+      display:block;
+      margin-bottom:9px;
+      font-size:.84rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--muted);
+    }
+
+    nav a{
+      display:block;
+      color:#344056;
+      padding:6px 8px;
+      border-radius:8px;
+      font-size:.92rem;
+    }
+
+    nav a:hover{
+      background:var(--surface-2);
+      text-decoration:none;
+      color:var(--accent-2);
+    }
+
+    main{min-width:0}
+    section{
+      background:var(--surface);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:0 8px 24px rgba(20,34,66,.04);
+      padding:30px;
+      margin-bottom:24px;
+      scroll-margin-top:20px;
+    }
+
+    h2{
+      margin:0 0 12px;
+      font-size:1.72rem;
+      letter-spacing:-.025em;
+    }
+
+    h3{
+      margin:28px 0 10px;
+      font-size:1.15rem;
+    }
+
+    p{margin:10px 0}
+    ul,ol{padding-left:1.35rem}
+    li{margin:.3rem 0}
+
+    .lead{
+      font-size:1.08rem;
+      color:#3f4b5f;
+    }
+
+    .callout{
+      margin:18px 0;
+      border:1px solid #cad8ff;
+      background:#f6f8ff;
+      border-radius:12px;
+      padding:16px 18px;
+    }
+
+    .callout strong{color:var(--accent-2)}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+      margin:16px 0;
+    }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:17px;
+      background:#fbfcfe;
+    }
+
+    .card h3{margin:0 0 6px;font-size:1rem}
+
+    pre{
+      overflow:auto;
+      background:var(--code);
+      color:var(--code-text);
+      padding:18px 20px;
+      border-radius:12px;
+      line-height:1.5;
+      font-size:.88rem;
+      border:1px solid #23304a;
+    }
+
+    :not(pre) > code{
+      background:#edf1f7;
+      border:1px solid #dce3ec;
+      border-radius:6px;
+      padding:.12em .36em;
+      font-size:.92em;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin:16px 0 6px;
+      font-size:.94rem;
+    }
+
+    th,td{
+      text-align:left;
+      vertical-align:top;
+      border-bottom:1px solid var(--line);
+      padding:10px 12px;
+    }
+
+    th{
+      background:#f7f9fc;
+      color:#344056;
+      font-size:.84rem;
+      text-transform:uppercase;
+      letter-spacing:.045em;
+    }
+
+    .req{
+      font-weight:700;
+      color:var(--good);
+    }
+
+    .opt{
+      font-weight:700;
+      color:var(--warn);
+    }
+
+    .footer{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:0 24px 60px;
+      color:var(--muted);
+      font-size:.92rem;
+    }
+
+    .badge{
+      display:inline-block;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:999px;
+      padding:3px 8px;
+      font-size:.78rem;
+      margin-right:6px;
+    }
+
+    @media (max-width:900px){
+      .hero-inner{grid-template-columns:1fr}
+      .layout{grid-template-columns:1fr}
+      nav{position:relative;top:0}
+      .grid{grid-template-columns:1fr}
+    }
+
+    @media print{
+      body{background:#fff}
+      nav{display:none}
+      .layout{display:block}
+      section,.meta-card{box-shadow:none}
+      a{color:inherit;text-decoration:none}
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div>
+        <span class="eyebrow">Technical Specification · Draft 1.0</span>
+        <h1>HTMT</h1>
+        <p class="subtitle"><strong>HyperText Markup Transcript</strong> is a human-readable, machine-readable markup language for representing conversations as structured, temporal, semantically meaningful documents.</p>
+        <div class="definition">
+          <strong>Core definition:</strong> HTMT is a serialization format for conversations. It represents not only what was said, but who said it, when it occurred, what it meant, how it relates to surrounding discourse, and what actions, decisions, references, or events emerged from it.
+        </div>
+      </div>
+
+      <aside class="meta-card" aria-label="Specification metadata">
+        <div class="meta-row"><div class="meta-key">Extension</div><div><code>.htmt</code></div></div>
+        <div class="meta-row"><div class="meta-key">Name</div><div>HyperText Markup Transcript</div></div>
+        <div class="meta-row"><div class="meta-key">Version</div><div>HTMT 1.0</div></div>
+        <div class="meta-row"><div class="meta-key">Encoding</div><div>UTF-8</div></div>
+        <div class="meta-row"><div class="meta-key">MIME</div><div><code>text/htmt</code> (proposed)</div></div>
+        <div class="meta-row"><div class="meta-key">Model</div><div>Conversation → Turns → Meaning → Timeline</div></div>
+        <div class="meta-row"><div class="meta-key">Status</div><div>Conceptual specification</div></div>
+      </aside>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav aria-label="Specification navigation">
+      <strong>Contents</strong>
+      <a href="#purpose">1. Purpose</a>
+      <a href="#principles">2. Design Principles</a>
+      <a href="#syntax">3. Document Syntax</a>
+      <a href="#core">4. Core Elements</a>
+      <a href="#temporal">5. Temporal Model</a>
+      <a href="#semantic">6. Semantic Model</a>
+      <a href="#hypertext">7. HyperText References</a>
+      <a href="#events">8. Events & Media</a>
+      <a href="#topics">9. Topics & Structure</a>
+      <a href="#ai">10. AI Conversations</a>
+      <a href="#extensibility">11. Extensibility</a>
+      <a href="#conformance">12. Conformance</a>
+      <a href="#security">13. Security & Privacy</a>
+      <a href="#comparison">14. Comparison</a>
+      <a href="#example">15. Full Example</a>
+      <a href="#modules">16. Module Model</a>
+    </nav>
+
+    <main>
+      <section id="purpose">
+        <h2>1. Purpose and Scope</h2>
+        <p class="lead">HTML describes documents. HTMT describes conversations over time.</p>
+        <p>HTMT is intended for meeting transcripts, support sessions, interviews, podcasts, recorded calls, AI conversations, hearings, collaborative work sessions, video transcripts, and other forms of dialogic or event-driven communication.</p>
+        <p>Unlike plain text, subtitle formats, or presentation-oriented transcript exports, HTMT preserves the <em>structure</em> and <em>semantics</em> of a conversation in a form that remains readable without specialized software.</p>
+
+        <div class="grid">
+          <div class="card"><h3>Human-readable</h3><p>A valid HTMT file should be understandable in a text editor without requiring a parser.</p></div>
+          <div class="card"><h3>Machine-readable</h3><p>Applications may extract speakers, timestamps, actions, decisions, topics, references, claims, and other semantic structures.</p></div>
+          <div class="card"><h3>Temporal</h3><p>Speech and events may be mapped to source audio or video with optional start and end times.</p></div>
+          <div class="card"><h3>Semantic</h3><p>The format may encode the role or consequence of an utterance rather than only its literal wording.</p></div>
+        </div>
+      </section>
+
+      <section id="principles">
+        <h2>2. Design Principles</h2>
+        <ol>
+          <li><strong>Conversation-first.</strong> Speaker turns are the primary unit of discourse.</li>
+          <li><strong>Semantics over presentation.</strong> HTMT describes meaning and structure; rendering is implementation-defined.</li>
+          <li><strong>Progressive complexity.</strong> A minimal transcript requires only a root and turns. Timestamps, semantics, media, and metadata remain optional.</li>
+          <li><strong>Graceful degradation.</strong> Unknown semantic elements should preserve their contained text.</li>
+          <li><strong>Extensibility.</strong> Domain-specific semantics must not require expansion of the core standard.</li>
+          <li><strong>Stable identity.</strong> Significant turns and semantic objects may carry identifiers for durable cross-references.</li>
+          <li><strong>Transport independence.</strong> HTMT is a file/document format, not a network protocol.</li>
+          <li><strong>AI-native without being AI-dependent.</strong> The language supports humans, software agents, and model-generated discourse equally.</li>
+        </ol>
+      </section>
+
+      <section id="syntax">
+        <h2>3. Document Syntax</h2>
+        <p>HTMT uses an XML-like markup syntax encoded as UTF-8. Element and attribute names are case-sensitive and should use lowercase ASCII names in the core specification.</p>
+
+        <h3>3.1 Minimum valid document</h3>
+        <pre><code>&lt;!HTMT 1.0&gt;
+
+&lt;transcript&gt;
+  &lt;turn speaker="Logan"&gt;
+    Did the deployment finish?
+  &lt;/turn&gt;
+
+  &lt;turn speaker="Nate"&gt;
+    Yes.
+  &lt;/turn&gt;
+&lt;/transcript&gt;</code></pre>
+
+        <h3>3.2 Recommended document structure</h3>
+        <pre><code>&lt;!HTMT 1.0&gt;
+
+&lt;transcript
+  id="standup-2026-08-27"
+  title="Engineering Standup"
+  date="2026-08-27"
+  duration="00:18:42"
+  lang="en"&gt;
+
+  &lt;meta&gt;...&lt;/meta&gt;
+  &lt;participants&gt;...&lt;/participants&gt;
+  &lt;media&gt;...&lt;/media&gt;
+  &lt;body&gt;...&lt;/body&gt;
+
+&lt;/transcript&gt;</code></pre>
+
+        <div class="callout">
+          <strong>Normative intent:</strong> An HTMT processor should preserve text contained inside elements it does not understand. Unknown semantic markup must not cause otherwise readable transcript content to disappear.
+        </div>
+      </section>
+
+      <section id="core">
+        <h2>4. Core Elements</h2>
+        <table>
+          <thead>
+            <tr><th>Element</th><th>Purpose</th><th>Core status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>&lt;transcript&gt;</code></td><td>Root document element.</td><td class="req">Required</td></tr>
+            <tr><td><code>&lt;body&gt;</code></td><td>Container for the transcript timeline.</td><td class="opt">Recommended</td></tr>
+            <tr><td><code>&lt;participants&gt;</code></td><td>Declares people and agents referenced by speaker identifiers.</td><td>Optional</td></tr>
+            <tr><td><code>&lt;person&gt;</code></td><td>Declares a human participant.</td><td>Optional</td></tr>
+            <tr><td><code>&lt;agent&gt;</code></td><td>Declares an AI or software participant.</td><td>Optional</td></tr>
+            <tr><td><code>&lt;turn&gt;</code></td><td>Represents one speaker contribution or discourse turn.</td><td class="req">Primary unit</td></tr>
+            <tr><td><code>&lt;event&gt;</code></td><td>Represents a non-speech event.</td><td>Optional</td></tr>
+            <tr><td><code>&lt;topic&gt;</code></td><td>Groups transcript material by subject or section.</td><td>Optional</td></tr>
+            <tr><td><code>&lt;meta&gt;</code></td><td>Contains metadata not otherwise represented by core attributes.</td><td>Optional</td></tr>
+            <tr><td><code>&lt;ref&gt;</code></td><td>Creates a hypertext reference to an internal or external resource.</td><td>Optional</td></tr>
+            <tr><td><code>&lt;media&gt;</code></td><td>Associates audio, video, or other media with the transcript.</td><td>Optional</td></tr>
+          </tbody>
+        </table>
+
+        <h3>4.1 Participants</h3>
+        <pre><code>&lt;participants&gt;
+  &lt;person id="logan" name="Logan Schmidt" /&gt;
+  &lt;person id="nate" name="Nate Waddell" /&gt;
+  &lt;agent id="assistant" name="Assistant" model="ExampleModel" /&gt;
+&lt;/participants&gt;</code></pre>
+
+        <p>A <code>speaker</code> attribute on a turn should resolve to a participant <code>id</code> when participant declarations are present. Implementations may permit literal speaker names when no participant registry is declared.</p>
+      </section>
+
+      <section id="temporal">
+        <h2>5. Temporal Model</h2>
+        <p>Timestamps are optional. This allows the same syntax to represent a live meeting, a typed chat, a podcast, or an asynchronous AI conversation.</p>
+
+        <h3>5.1 Timed turn</h3>
+        <pre><code>&lt;turn
+  id="t42"
+  speaker="logan"
+  start="00:13:42.220"
+  end="00:13:49.810"&gt;
+  We should verify the export before billing runs.
+&lt;/turn&gt;</code></pre>
+
+        <h3>5.2 Time representation</h3>
+        <ul>
+          <li>Relative media time should use <code>HH:MM:SS</code> with optional fractional seconds.</li>
+          <li>Absolute time may use ISO 8601 where a real-world timestamp is required.</li>
+          <li><code>start</code> may appear without <code>end</code>.</li>
+          <li>Processors should not assume turns are non-overlapping.</li>
+          <li>Overlapping speech should be representable without altering source order.</li>
+        </ul>
+      </section>
+
+      <section id="semantic">
+        <h2>6. Semantic Model</h2>
+        <p>Semantic elements allow transcript text to carry operational or interpretive meaning. They are annotations on discourse, not replacements for the underlying words.</p>
+
+        <table>
+          <thead><tr><th>Element</th><th>Meaning</th><th>Typical attributes</th></tr></thead>
+          <tbody>
+            <tr><td><code>&lt;question&gt;</code></td><td>A question posed by a participant.</td><td><code>id</code></td></tr>
+            <tr><td><code>&lt;answer&gt;</code></td><td>An answer or response.</td><td><code>to</code></td></tr>
+            <tr><td><code>&lt;decision&gt;</code></td><td>A proposed, accepted, superseded, or rejected decision.</td><td><code>id</code>, <code>status</code></td></tr>
+            <tr><td><code>&lt;action&gt;</code></td><td>An assigned or inferred action item.</td><td><code>id</code>, <code>owner</code>, <code>due</code>, <code>status</code></td></tr>
+            <tr><td><code>&lt;claim&gt;</code></td><td>A factual or inferential claim.</td><td><code>confidence</code>, <code>source</code></td></tr>
+            <tr><td><code>&lt;fact&gt;</code></td><td>A statement asserted as established within the transcript context.</td><td><code>source</code></td></tr>
+            <tr><td><code>&lt;risk&gt;</code></td><td>A risk, concern, or possible adverse condition.</td><td><code>severity</code></td></tr>
+            <tr><td><code>&lt;note&gt;</code></td><td>An editorial or system annotation.</td><td><code>author</code>, <code>type</code></td></tr>
+            <tr><td><code>&lt;quote&gt;</code></td><td>Quoted material distinct from the current speaker's own utterance.</td><td><code>source</code></td></tr>
+          </tbody>
+        </table>
+
+        <h3>6.1 Question and answer relationship</h3>
+        <pre><code>&lt;turn speaker="john" start="00:08:31"&gt;
+  &lt;question id="q17"&gt;
+    Who is going to validate the export?
+  &lt;/question&gt;
+&lt;/turn&gt;
+
+&lt;turn speaker="logan" start="00:08:45"&gt;
+  &lt;answer to="q17"&gt;
+    I'll validate it this afternoon.
+  &lt;/answer&gt;
+
+  &lt;action owner="logan" due="2026-08-27" status="open"&gt;
+    Validate export.
+  &lt;/action&gt;
+&lt;/turn&gt;</code></pre>
+
+        <h3>6.2 Decision annotation</h3>
+        <pre><code>&lt;turn speaker="logan"&gt;
+  I think we should deploy this Friday.
+
+  &lt;decision id="d4" status="proposed"&gt;
+    Deploy Friday.
+  &lt;/decision&gt;
+&lt;/turn&gt;</code></pre>
+      </section>
+
+      <section id="hypertext">
+        <h2>7. HyperText References</h2>
+        <p>The “HyperText” portion of HTMT is normative to the design: transcripts should be able to link to resources, identifiers, other transcripts, and exact transcript locations.</p>
+
+        <pre><code>&lt;ref href="https://example.com/spec"&gt;
+  Inventory Specification
+&lt;/ref&gt;
+
+&lt;ref href="jira://FFS-2309"&gt;
+  FFS-2309
+&lt;/ref&gt;
+
+&lt;ref transcript="billing.htmt" turn="t184"&gt;
+  Earlier billing discussion
+&lt;/ref&gt;</code></pre>
+
+        <p>References may target URLs, application-specific URI schemes, local files, transcript identifiers, turn identifiers, semantic object identifiers, or other resolvable resources.</p>
+      </section>
+
+      <section id="events">
+        <h2>8. Events and Media</h2>
+        <p>HTMT models more than spoken language. Events allow software to preserve important contextual occurrences that happen on the timeline.</p>
+
+        <pre><code>&lt;event type="silence" start="00:02:14" duration="3.2s" /&gt;
+
+&lt;event type="laughter" start="00:03:02" /&gt;
+
+&lt;event type="screen-share" start="00:08:11"&gt;
+  Inventory Dashboard
+&lt;/event&gt;
+
+&lt;event type="file-shared"&gt;
+  &lt;ref href="./inventory-report.xlsx"&gt;
+    Inventory Report
+  &lt;/ref&gt;
+&lt;/event&gt;</code></pre>
+
+        <h3>8.1 Media association</h3>
+        <pre><code>&lt;media
+  id="recording"
+  type="video"
+  src="./meeting.mp4"
+  duration="00:18:42" /&gt;</code></pre>
+
+        <p>A transcript viewer may use temporal attributes to seek media when a user selects a turn or semantic object.</p>
+      </section>
+
+      <section id="topics">
+        <h2>9. Topics and Hierarchical Structure</h2>
+        <p>Topics may divide a transcript into semantic sections while retaining the chronological sequence.</p>
+
+        <pre><code>&lt;topic id="inventory" name="Inventory"&gt;
+  &lt;turn speaker="john"&gt;
+    Let's talk about inventory drift.
+  &lt;/turn&gt;
+  ...
+&lt;/topic&gt;
+
+&lt;topic id="billing" name="Billing"&gt;
+  ...
+&lt;/topic&gt;</code></pre>
+
+        <p>A renderer can derive navigable chapter markers, summaries, indexes, or topic timelines directly from these structures.</p>
+      </section>
+
+      <section id="ai">
+        <h2>10. AI and Software-Agent Conversations</h2>
+        <p>HTMT intentionally treats software agents as first-class participants rather than forcing them into human speaker models.</p>
+
+        <pre><code>&lt;participants&gt;
+  &lt;person id="user" name="Logan" /&gt;
+  &lt;agent
+    id="assistant"
+    name="Assistant"
+    model="ExampleModel"
+    provider="ExampleProvider" /&gt;
+&lt;/participants&gt;
+
+&lt;body&gt;
+  &lt;turn speaker="user"&gt;
+    Explain why our inventory numbers drift.
+  &lt;/turn&gt;
+
+  &lt;turn speaker="assistant"&gt;
+    There are several possible causes.
+
+    &lt;claim confidence="0.82"&gt;
+      Timing differences between systems may contribute to observed drift.
+    &lt;/claim&gt;
+  &lt;/turn&gt;
+&lt;/body&gt;</code></pre>
+
+        <p>Model, provider, tool, runtime, or generation metadata may be represented when needed, but implementations should avoid treating such metadata as mandatory for basic transcript portability.</p>
+      </section>
+
+      <section id="extensibility">
+        <h2>11. Extensibility</h2>
+        <p>The HTMT core should remain intentionally small. Domain vocabularies should be introduced through namespaced extension elements.</p>
+
+        <pre><code>&lt;x-medical:diagnosis&gt;
+  ...
+&lt;/x-medical:diagnosis&gt;
+
+&lt;x-sales:opportunity&gt;
+  ...
+&lt;/x-sales:opportunity&gt;
+
+&lt;x-support:ticket&gt;
+  ...
+&lt;/x-support:ticket&gt;</code></pre>
+
+        <h3>11.1 Extension requirements</h3>
+        <ul>
+          <li>Extension elements should use a namespace-like prefix.</li>
+          <li>Core processors may ignore unknown extension semantics.</li>
+          <li>Unknown extensions must not make the transcript unreadable.</li>
+          <li>Extensions should preserve meaningful text content where practical.</li>
+          <li>Extensions should not redefine the semantics of core elements.</li>
+        </ul>
+      </section>
+
+      <section id="conformance">
+        <h2>12. Conformance Model</h2>
+        <p>A conforming HTMT 1.0 document should satisfy the following requirements:</p>
+        <ol>
+          <li>Be encoded as UTF-8.</li>
+          <li>Contain exactly one root <code>&lt;transcript&gt;</code> element.</li>
+          <li>Represent conversational contributions using <code>&lt;turn&gt;</code>.</li>
+          <li>Use unique values for identifiers within the document where <code>id</code> is present.</li>
+          <li>Resolve internal <code>to</code>, <code>turn</code>, and comparable identifier references when targets are local.</li>
+          <li>Preserve source ordering of turns and events.</li>
+          <li>Use valid timestamp forms when temporal attributes are present.</li>
+        </ol>
+
+        <h3>12.1 Processor behavior</h3>
+        <p>A basic processor may display only turn text and speakers. An advanced processor may additionally resolve links, seek media, construct topic navigation, identify action items, visualize decisions, trace question-answer pairs, or index semantic objects.</p>
+
+        <div class="callout">
+          <strong>Compatibility rule:</strong> semantic richness should be additive. A sophisticated HTMT document must remain useful to a simple processor.
+        </div>
+      </section>
+
+      <section id="security">
+        <h2>13. Security, Privacy, and Trust</h2>
+        <p>Transcript data may contain sensitive personal, organizational, legal, or operational information. The file format itself does not imply that embedded metadata is trusted.</p>
+        <ul>
+          <li>Processors should treat external references as untrusted input.</li>
+          <li>Automatic execution of linked scripts, binaries, or application URIs is discouraged.</li>
+          <li>Renderers should escape transcript text and extension content before inserting it into HTML or other executable environments.</li>
+          <li>Metadata such as speaker identity, model identity, authorship, confidence, and semantic annotations should be treated as claims unless cryptographically verified.</li>
+          <li>Redaction tools should be able to remove text, metadata, participant identifiers, temporal information, references, and semantic annotations independently.</li>
+        </ul>
+      </section>
+
+      <section id="comparison">
+        <h2>14. Relationship to Existing Formats</h2>
+        <table>
+          <thead><tr><th>Format</th><th>Primary question answered</th><th>HTMT distinction</th></tr></thead>
+          <tbody>
+            <tr><td>TXT</td><td>What text exists?</td><td>HTMT adds participant, temporal, semantic, and relational structure.</td></tr>
+            <tr><td>SRT</td><td>What caption appeared, and when?</td><td>HTMT represents discourse and meaning, not only subtitle timing.</td></tr>
+            <tr><td>WebVTT</td><td>What timed text cues belong to media?</td><td>HTMT adds conversation identities, semantic objects, topics, actions, and hypertext relationships.</td></tr>
+            <tr><td>HTML</td><td>How is a document structured and presented?</td><td>HTMT's native model is a conversation timeline rather than a page document.</td></tr>
+            <tr><td>JSON transcript exports</td><td>How can one application's transcript data be serialized?</td><td>HTMT targets a portable, human-readable interchange syntax with shared semantic primitives.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <strong>Conceptual distinction:</strong><br />
+          SRT/WebVTT: “What was said, and when?”<br />
+          HTMT: “Who said what, when, in response to what, what did it mean, what was decided, and what does it connect to?”
+        </div>
+      </section>
+
+      <section id="example">
+        <h2>15. Complete Example</h2>
+        <pre><code>&lt;!HTMT 1.0&gt;
+
+&lt;transcript
+  id="engineering-standup-2026-08-27"
+  title="Engineering Standup"
+  date="2026-08-27"
+  duration="00:18:42"
+  lang="en"&gt;
+
+  &lt;participants&gt;
+    &lt;person id="logan" name="Logan Schmidt" /&gt;
+    &lt;person id="nate" name="Nate Waddell" /&gt;
+    &lt;person id="john" name="John Martin" /&gt;
+  &lt;/participants&gt;
+
+  &lt;media
+    id="recording"
+    type="audio"
+    src="./engineering-standup.mp3"
+    duration="00:18:42" /&gt;
+
+  &lt;body&gt;
+
+    &lt;topic id="inventory" name="Inventory"&gt;
+
+      &lt;turn id="t1" speaker="logan" start="00:00:03"&gt;
+        Morning everyone. Let's start with inventory.
+      &lt;/turn&gt;
+
+      &lt;turn id="t2" speaker="nate" start="00:00:08"&gt;
+        The reconciliation job completed overnight.
+      &lt;/turn&gt;
+
+      &lt;turn id="t3" speaker="john" start="00:00:14"&gt;
+        &lt;question id="q1"&gt;
+          Are all ShipStation deductions represented in our system?
+        &lt;/question&gt;
+      &lt;/turn&gt;
+
+      &lt;turn id="t4" speaker="nate" start="00:00:20"&gt;
+        &lt;answer to="q1"&gt;
+          Yes, for the pathways we've currently validated.
+        &lt;/answer&gt;
+      &lt;/turn&gt;
+
+      &lt;turn id="t5" speaker="logan" start="00:01:02"&gt;
+        We should verify the export before billing runs.
+
+        &lt;action
+          id="a1"
+          owner="logan"
+          due="2026-08-27"
+          status="open"&gt;
+          Validate the billing export.
+        &lt;/action&gt;
+      &lt;/turn&gt;
+
+      &lt;turn id="t6" speaker="john" start="00:01:18"&gt;
+        Agreed.
+
+        &lt;decision id="d1" status="accepted"&gt;
+          Validate the export before the billing run.
+        &lt;/decision&gt;
+      &lt;/turn&gt;
+
+    &lt;/topic&gt;
+
+    &lt;event type="screen-share" start="00:02:11"&gt;
+      &lt;ref href="https://example.com/inventory"&gt;
+        Inventory Dashboard
+      &lt;/ref&gt;
+    &lt;/event&gt;
+
+  &lt;/body&gt;
+&lt;/transcript&gt;</code></pre>
+      </section>
+
+      <section id="modules">
+        <h2>16. Proposed HTMT 1.0 Module Model</h2>
+        <p>For standardization, HTMT may be defined as a small mandatory core with optional capability modules.</p>
+
+        <div class="grid">
+          <div class="card">
+            <h3>HTMT Core</h3>
+            <p><code>transcript</code>, <code>body</code>, <code>participants</code>, <code>person</code>, <code>agent</code>, <code>turn</code>, <code>meta</code>.</p>
+          </div>
+          <div class="card">
+            <h3>Temporal Module</h3>
+            <p>Timing, durations, overlap, event sequencing, media synchronization.</p>
+          </div>
+          <div class="card">
+            <h3>Semantic Module</h3>
+            <p>Questions, answers, decisions, actions, facts, claims, risks, notes, quotations.</p>
+          </div>
+          <div class="card">
+            <h3>HyperText Module</h3>
+            <p>External links, transcript-to-transcript references, turn references, application URIs.</p>
+          </div>
+          <div class="card">
+            <h3>Media Module</h3>
+            <p>Audio/video association, screen sharing, attachments, timed non-speech events.</p>
+          </div>
+          <div class="card">
+            <h3>Extension Module</h3>
+            <p>Namespaced domain vocabularies while preserving forward compatibility.</p>
+          </div>
+        </div>
+
+        <h3>16.1 Design summary</h3>
+        <p><span class="badge">HTML</span> Document → Elements → Meaning → Presentation</p>
+        <p><span class="badge">HTMT</span> Conversation → Turns → Meaning → Timeline</p>
+
+        <div class="callout">
+          <strong>Specification thesis:</strong> HTMT should not become a giant transcription schema. Its core value is a small, durable conversation model that remains readable by people, useful to conventional software, and structurally rich enough for AI-era communication.
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <p><strong>HTMT 1.0 — HyperText Markup Transcript</strong></p>
+    <p>This document is a conceptual technical specification intended to define the semantics, syntax, interoperability goals, and extensibility model of the proposed <code>.htmt</code> file format.</p>
+  </footer>
+</body>
+</html>
